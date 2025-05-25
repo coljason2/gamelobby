@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>圈圈叉叉 - 玩家 vs 電腦</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f3f4f6;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 36px;
+            border: 2px solid #4b5563;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            transition: background-color 0.2s;
+        }
+        .cell:hover {
+            background-color: #e5e7eb;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 8px 16px;
+            font-size: 16px;
+            border-radius: 8px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<h1>圈圈叉叉：玩家 vs 電腦</h1>
+<div id="game" class="board">
+    <div class="cell" onclick="makePlayerMove(0)"></div>
+    <div class="cell" onclick="makePlayerMove(1)"></div>
+    <div class="cell" onclick="makePlayerMove(2)"></div>
+    <div class="cell" onclick="makePlayerMove(3)"></div>
+    <div class="cell" onclick="makePlayerMove(4)"></div>
+    <div class="cell" onclick="makePlayerMove(5)"></div>
+    <div class="cell" onclick="makePlayerMove(6)"></div>
+    <div class="cell" onclick="makePlayerMove(7)"></div>
+    <div class="cell" onclick="makePlayerMove(8)"></div>
+</div>
+<div class="info" id="info">你是 X，輪到你</div>
+<button class="btn" onclick="resetGame()">重新開始</button>
+<a href="/lobby"><button class="btn">回到大廳</button></a>
+
+<script>
+    let board = Array(9).fill(' ');
+    let gameOver = false;
+
+    function makePlayerMove(index) {
+        if (gameOver || board[index] !== ' ') return;
+        board[index] = 'X';
+        updateBoard();
+        if (checkEnd('X')) return;
+
+        setTimeout(() => {
+            makeComputerMove();
+            checkEnd('O');
+        }, 300);
+    }
+
+    function makeComputerMove() {
+        let emptyIndexes = board.map((val, i) => val === ' ' ? i : null).filter(i => i !== null);
+        if (emptyIndexes.length === 0) return;
+        let randomIndex = emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)];
+        board[randomIndex] = 'O';
+        updateBoard();
+    }
+
+    function checkEnd(player) {
+        if (checkWin(player)) {
+            document.getElementById("info").textContent = (player === 'X' ? "你贏了！" : "電腦贏了！");
+            gameOver = true;
+            return true;
+        }
+        if (!board.includes(' ')) {
+            document.getElementById("info").textContent = "平手！";
+            gameOver = true;
+            return true;
+        }
+        document.getElementById("info").textContent = (player === 'X') ? "輪到電腦" : "輪到你";
+        return false;
+    }
+
+    function checkWin(player) {
+        const combos = [
+            [0,1,2], [3,4,5], [6,7,8],
+            [0,3,6], [1,4,7], [2,5,8],
+            [0,4,8], [2,4,6]
+        ];
+        return combos.some(combo => combo.every(i => board[i] === player));
+    }
+
+    function updateBoard() {
+        document.querySelectorAll('.cell').forEach((cell, i) => {
+            cell.textContent = board[i];
+        });
+    }
+
+    function resetGame() {
+        board = Array(9).fill(' ');
+        gameOver = false;
+        updateBoard();
+        document.getElementById("info").textContent = "你是 X，輪到你";
+    }
+</script>
+</body>
+</html>

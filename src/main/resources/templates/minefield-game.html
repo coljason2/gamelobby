@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>猜地雷</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            margin: 0; padding: 20px;
+        }
+        h1 {
+            margin-bottom: 15px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        select, button {
+            font-size: 16px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background-color: #8e44ad;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        select:hover, button:hover {
+            background-color: #6c3483;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 6px;
+        }
+        td {
+            width: 50px;
+            height: 50px;
+            background-color: #5a2a83;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 28px;
+            line-height: 50px;
+            user-select: none;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+        td:hover {
+            background-color: #7e3fb8;
+        }
+        td.revealed-safe {
+            background-color: #9b59b6;
+            cursor: default;
+            color: #d1c4e9;
+            box-shadow: none;
+        }
+        td.revealed-mine {
+            background-color: #e74c3c;
+            cursor: default;
+            color: white;
+            box-shadow: none;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            min-height: 24px;
+        }
+        #action-buttons {
+            margin-top: 25px;
+            display: none;
+        }
+        #action-buttons button {
+            margin: 0 10px;
+            background-color: #27ae60;
+        }
+        #action-buttons button.cancel {
+            background-color: #c0392b;
+        }
+        #action-buttons button:hover {
+            opacity: 0.85;
+        }
+    </style>
+</head>
+<body>
+<h1>猜地雷 - [[${size}]] x [[${size}]]</h1>
+
+<form method="get" action="/lobby/game/猜地雷" id="size-form">
+    <label for="size">選擇地圖大小:</label>
+    <select name="size" id="size">
+        <option value="5" th:selected="${size == 5}">5 x 5</option>
+        <option value="6" th:selected="${size == 6}">6 x 6</option>
+        <option value="7" th:selected="${size == 7}">7 x 7</option>
+        <option value="8" th:selected="${size == 8}">8 x 8</option>
+        <option value="9" th:selected="${size == 9}">9 x 9</option>
+    </select>
+    <button type="submit">開始</button>
+</form>
+
+<table id="minefield">
+    <tbody>
+    <tr th:each="row : ${#numbers.sequence(0, size-1)}">
+        <td th:each="col : ${#numbers.sequence(0, size-1)}"
+            th:attr="data-index=${row * size + col}">□</td>
+    </tr>
+    </tbody>
+</table>
+
+<div id="message"></div>
+
+<div id="action-buttons">
+    <button id="restart-btn">重新開始</button>
+    <button id="exit-btn" class="cancel">回大廳</button>
+</div>
+
+<script>
+    const table = document.getElementById('minefield');
+    const size = [[${size}]];
+    const messageEl = document.getElementById('message');
+    const actionButtons = document.getElementById('action-buttons');
+    const restartBtn = document.getElementById('restart-btn');
+    const exitBtn = document.getElementById('exit-btn');
+
+    let gameOver = false;
+
+    table.addEventListener('click', async (e) => {
+        if (gameOver) return;
+
+        const target = e.target;
+        if (target.tagName !== 'TD' || target.classList.contains('revealed-safe') || target.classList.contains('revealed-mine')) {
+            return;
+        }
+        const index = target.getAttribute('data-index');
+
+        try {
+            const response = await fetch('/lobby/game/minefield/click', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({index})
+            });
+
+            const result = await response.json();
+
+            if (result.status !== 'ok') {
+                alert(result.message || '發生錯誤');
+                return;
+            }
+
+            if (result.mine) {
+                target.textContent = '💣';
+                target.classList.add('revealed-mine');
+                messageEl.textContent = '踩到地雷！遊戲結束。請選擇重新開始或回大廳。';
+                gameOver = true;
+                actionButtons.style.display = 'block';
+            } else {
+                target.textContent = '✔️';
+                target.classList.add('revealed-safe');
+                messageEl.textContent = '安全，請繼續點擊。';
+            }
+
+        } catch (error) {
+            alert('請求失敗，請稍後再試');
+        }
+    });
+
+    restartBtn.addEventListener('click', () => {
+        window.location.href = `/lobby/game/猜地雷?size=${size}`;
+    });
+
+    exitBtn.addEventListener('click', () => {
+        window.location.href = '/lobby';
+    });
+</script>
+</body>
+</html>

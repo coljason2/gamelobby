@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <title>數數看遊戲</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .question-box {
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+
+        .emojis {
+            font-size: 3.5rem;
+            word-break: break-word;
+            margin-bottom: 20px;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .choice {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .choice:hover {
+            background-color: #0056b3;
+        }
+
+        .choice.correct {
+            background-color: #28a745;
+        }
+
+        .choice.wrong {
+            background-color: #dc3545;
+        }
+
+        .result {
+            font-size: 1.5em;
+            margin-top: 30px;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 30px;
+            font-size: 1.1em;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>數數看遊戲</h1>
+<div id="game-container" class="question-box"></div>
+<div class="result" id="final-result"></div>
+
+<script>
+    const emojiList = ['🍎', '🐶', '🧸', '🎈', '🚗', '🍭', '🌟', '🧃', '🎁', '🧽'];
+    const totalQuestions = Math.floor(Math.random() * 10) + 1;
+    let currentQuestion = 0;
+    let score = 0;
+
+    const gameContainer = document.getElementById('game-container');
+    const finalResult = document.getElementById('final-result');
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateQuestion() {
+        const count = getRandomInt(1, 20);
+        const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+        const answer = count;
+
+        const choices = new Set();
+        choices.add(answer);
+        while (choices.size < 3) {
+            choices.add(getRandomInt(1, 20));
+        }
+
+        return {
+            emojis: emoji.repeat(count),
+            answer,
+            options: Array.from(choices).sort(() => Math.random() - 0.5)
+        };
+    }
+
+    function renderQuestion() {
+        if (currentQuestion >= totalQuestions) {
+            gameContainer.innerHTML = '';
+            finalResult.innerHTML = `
+        你答對了 ${score} / ${totalQuestions} 題！
+        <div class="btn-group">
+          <button onclick="restartGame()">重新開始</button>
+          <button onclick="goLobby()">回到大廳</button>
+        </div>
+      `;
+            return;
+        }
+
+        const { emojis, answer, options } = generateQuestion();
+
+        gameContainer.innerHTML = `
+      <div class="prompt">請數一數下面的圖案：</div>
+      <div class="emojis">${emojis}</div>
+      <div class="choices">
+        ${options.map(num => `<button class="choice" data-num="${num}">${num}</button>`).join('')}
+      </div>
+    `;
+
+        document.querySelectorAll('.choice').forEach(choiceBtn => {
+            choiceBtn.addEventListener('click', () => {
+                const selected = parseInt(choiceBtn.dataset.num);
+                const correct = selected === answer;
+
+                if (correct) {
+                    choiceBtn.classList.add('correct');
+                    score++;
+                } else {
+                    choiceBtn.classList.add('wrong');
+                    document.querySelector(`.choice[data-num="${answer}"]`).classList.add('correct');
+                }
+
+                document.querySelectorAll('.choice').forEach(btn => {
+                    btn.disabled = true;
+                });
+
+                setTimeout(() => {
+                    currentQuestion++;
+                    renderQuestion();
+                }, 1000);
+            });
+        });
+    }
+
+    function restartGame() {
+        currentQuestion = 0;
+        score = 0;
+        finalResult.innerHTML = '';
+        renderQuestion();
+    }
+
+    function goLobby() {
+        window.location.href = '/lobby'; // 替換為你的大廳網址
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>

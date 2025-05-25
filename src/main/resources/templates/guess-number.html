@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>比數字大小</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1.2em;
+            width: 100px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            margin-left: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin-top: 30px;
+            font-size: 1.4em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<h1>猜數字遊戲</h1>
+<form th:action="@{/lobby/game/guess}" method="post">
+    <input type="number" name="guess" min="1" max="100" required />
+    <button type="submit">猜！</button>
+</form>
+<div class="message" th:text="${message}"></div>
+<a href="/lobby">⬅️ 回到大廳</a>
+</body>
+</html>

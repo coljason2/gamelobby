@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>剪刀石頭布</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #444;
+    }
+    form {
+      margin-top: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 1.4em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+<h1>剪刀石頭布</h1>
+<form th:action="@{/lobby/game/rps}" method="post">
+  <button type="submit" name="choice" value="剪刀">✌ 剪刀</button>
+  <button type="submit" name="choice" value="石頭">✊ 石頭</button>
+  <button type="submit" name="choice" value="布">✋ 布</button>
+</form>
+<div class="result" th:if="${result}" th:text="${result}"></div>
+<a href="/lobby">⬅️ 回到大廳</a>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${gameName}">遊戲</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 3em;
+            color: #444;
+        }
+        p {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        a {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        a:hover {
+            background-color: #fff;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<h1 th:text="${gameName}">遊戲</h1>
+<p>這裡是 <span th:text="${gameName}"></span> 的遊戲介面（尚未實作）</p>
+<a href="/lobby">⬅️ 回到大廳</a>
+</body>
+</html>

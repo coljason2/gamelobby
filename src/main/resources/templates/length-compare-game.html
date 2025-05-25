@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8"/>
+    <title>長短比較遊戲</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            background: #f0f4f8;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .question {
+            margin: 20px auto;
+            max-width: 600px;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+        }
+
+        .prompt {
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 左對齊 */
+            gap: 20px;
+            width: 100%;             /* 撐滿父元素 */
+            font-family: monospace;
+            font-size: 3rem;
+        }
+
+        .option {
+            width: 100%;              /* 撐滿父容器 */
+            text-align: left;         /* 文字靠左 */
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .option:hover {
+            border-color: #007bff;
+        }
+
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .option.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .result {
+            font-size: 1.5em;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 30px;
+            font-size: 1.2em;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>長短比較遊戲</h1>
+<div id="game-container"></div>
+<div class="result" id="final-result"></div>
+
+<script>
+    const items = ["🐍", "🧦", "🥤", "🧣", "🐈", "🍫"];
+
+    const totalQuestions = 7;
+    let currentQuestion = 0;
+    let score = 0;
+
+    // 取得 n 個不重複隨機數字，範圍 min ~ max（含）
+    function getUniqueRandomNumbers(n, min, max) {
+        const set = new Set();
+        while (set.size < n) {
+            const r = Math.floor(Math.random() * (max - min + 1)) + min;
+            set.add(r);
+        }
+        return [...set];
+    }
+
+    function shuffle(arr) {
+        return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function generateQuestion() {
+        // 選一個 emoji 類別
+        const emoji = items[Math.floor(Math.random() * items.length)];
+
+        // 取得3個不重複長度，範圍 1~5 (你可以改範圍)
+        const lengths = getUniqueRandomNumbers(3, 1, 10);
+
+        // 依照長度產生不同長度的 emoji 字串
+        const options = lengths.map(len => emoji.repeat(len));
+
+        // 打亂順序
+        const shuffledOptions = shuffle(options);
+
+        // 隨機決定要找「最長」或「最短」
+        const expected = Math.random() < 0.5 ? 'longest' : 'shortest';
+
+        return {options: shuffledOptions, expected};
+    }
+
+    const gameContainer = document.getElementById('game-container');
+    const finalResult = document.getElementById('final-result');
+
+    function renderQuestion() {
+        if (currentQuestion >= totalQuestions) {
+            gameContainer.innerHTML = '';
+            finalResult.innerHTML = `
+        答對 ${score} / ${totalQuestions} 題
+        <div class="btn-group" style="margin-top: 30px;">
+          <button id="restart-btn">重新開始</button>
+          <button id="lobby-btn">回到大廳</button>
+        </div>
+      `;
+
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestion = 0;
+                score = 0;
+                finalResult.textContent = '';
+                renderQuestion();
+            });
+
+            document.getElementById('lobby-btn').addEventListener('click', () => {
+                window.location.href = '/lobby'; // 修改成你的大廳路徑
+            });
+
+            return;
+        }
+
+        finalResult.textContent = '';
+        const {options, expected} = generateQuestion();
+
+        gameContainer.dataset.expected = expected;
+        gameContainer.dataset.options = JSON.stringify(options);
+
+        gameContainer.innerHTML = `
+      <div class="question">
+        <div class="prompt">請選出 ${expected === 'longest' ? '最長' : '最短'} 的組合：</div>
+        <div class="options">
+          ${options.map((opt, i) => `<div class="option" data-index="${i}">${opt}</div>`).join('')}
+        </div>
+      </div>
+    `;
+
+        document.querySelectorAll('.option').forEach(el => {
+            el.addEventListener('click', () => {
+                const clickedIndex = parseInt(el.dataset.index, 10);
+                const opts = JSON.parse(gameContainer.dataset.options);
+                const exp = gameContainer.dataset.expected;
+
+                let correctIndex = 0;
+                if (exp === 'longest') {
+                    let maxLen = -1;
+                    opts.forEach((v, idx) => {
+                        if (v.length > maxLen) {
+                            maxLen = v.length;
+                            correctIndex = idx;
+                        }
+                    });
+                } else {
+                    let minLen = 999;
+                    opts.forEach((v, idx) => {
+                        if (v.length < minLen) {
+                            minLen = v.length;
+                            correctIndex = idx;
+                        }
+                    });
+                }
+
+                if (clickedIndex === correctIndex) {
+                    el.classList.add('correct');
+                    score++;
+                } else {
+                    el.classList.add('wrong');
+                    document.querySelector(`.option[data-index="${correctIndex}"]`).classList.add('correct');
+                }
+
+                document.querySelectorAll('.option').forEach(o => o.style.pointerEvents = 'none');
+
+                setTimeout(() => {
+                    currentQuestion++;
+                    renderQuestion();
+                }, 1200);
+            });
+        });
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>
