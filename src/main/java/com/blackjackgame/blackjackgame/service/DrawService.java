@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -131,11 +129,17 @@ public class DrawService {
                 try {
                     DrawResult draw = objectMapper.readValue(line, DrawResult.class);
                     drawHistory.add(draw);
+
+                    // 更新 currentIssue 為當前最大期數 + 1
+                    if (draw.getIssueNumber() >= currentIssue.get()) {
+                        currentIssue.set(draw.getIssueNumber() + 1);
+                    }
                 } catch (Exception e) {
                     log.warn("[DrawService] 無法解析行: " + line, e);
                 }
             });
-            log.info("[DrawService] 成功載入今日開獎記錄，共 {} 筆", drawHistory.size());
+            log.info("[DrawService] 成功載入今日開獎記錄，共 {} 筆，下一期從 {} 開始",
+                    drawHistory.size(), currentIssue.get());
         } catch (IOException e) {
             log.error("[DrawService] 無法讀取記錄檔: " + filePath, e);
         }

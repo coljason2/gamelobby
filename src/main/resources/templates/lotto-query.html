@@ -1,133 +1,133 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <title>樂透查詢</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #f1f1f1;
-            padding: 30px;
-            text-align: center;
-        }
+<!--<!DOCTYPE html>-->
+<!--<html lang="zh-TW">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>樂透查詢</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: sans-serif;-->
+<!--            background: #f1f1f1;-->
+<!--            padding: 30px;-->
+<!--            text-align: center;-->
+<!--        }-->
 
-        h1 {
-            margin-bottom: 20px;
-        }
+<!--        h1 {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
 
-        .section {
-            background: white;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 600px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
-        }
+<!--        .section {-->
+<!--            background: white;-->
+<!--            margin: 20px auto;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 10px;-->
+<!--            width: 600px;-->
+<!--            box-shadow: 0 0 8px rgba(0,0,0,0.1);-->
+<!--        }-->
 
-        input, button {
-            padding: 5px 10px;
-            font-size: 1em;
-            margin: 5px;
-        }
+<!--        input, button {-->
+<!--            padding: 5px 10px;-->
+<!--            font-size: 1em;-->
+<!--            margin: 5px;-->
+<!--        }-->
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+<!--        ul {-->
+<!--            list-style: none;-->
+<!--            padding: 0;-->
+<!--        }-->
 
-        li {
-            margin: 5px 0;
-        }
+<!--        li {-->
+<!--            margin: 5px 0;-->
+<!--        }-->
 
-        .result-line {
-            font-family: monospace;
-        }
+<!--        .result-line {-->
+<!--            font-family: monospace;-->
+<!--        }-->
 
-        .winner {
-            color: green;
-        }
-    </style>
-</head>
-<body>
+<!--        .winner {-->
+<!--            color: green;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
 
-<h1>🎯 樂透查詢畫面</h1>
+<!--<h1>🎯 樂透查詢畫面</h1>-->
 
-<div class="section">
-    <h2>最近開獎結果</h2>
-    <button onclick="fetchRecent()">查詢最近 10 期</button>
-    <ul id="recent-results"></ul>
-</div>
+<!--<div class="section">-->
+<!--    <h2>最近開獎結果</h2>-->
+<!--    <button onclick="fetchRecent()">查詢最近 10 期</button>-->
+<!--    <ul id="recent-results"></ul>-->
+<!--</div>-->
 
-<div class="section">
-    <h2>查詢指定期數</h2>
-    <input type="number" id="issue-input" placeholder="輸入期數">
-    <button onclick="fetchIssue()">查詢</button>
-    <div id="issue-result"></div>
-</div>
+<!--<div class="section">-->
+<!--    <h2>查詢指定期數</h2>-->
+<!--    <input type="number" id="issue-input" placeholder="輸入期數">-->
+<!--    <button onclick="fetchIssue()">查詢</button>-->
+<!--    <div id="issue-result"></div>-->
+<!--</div>-->
 
-<div class="section">
-    <h2>查詢個人下注</h2>
-    <input type="text" id="user-name" placeholder="輸入暱稱">
-    <input type="number" id="user-issue" placeholder="期數">
-    <button onclick="fetchUserBets()">查詢</button>
-    <div id="user-bets"></div>
-</div>
+<!--<div class="section">-->
+<!--    <h2>查詢個人下注</h2>-->
+<!--    <input type="text" id="user-name" placeholder="輸入暱稱">-->
+<!--    <input type="number" id="user-issue" placeholder="期數">-->
+<!--    <button onclick="fetchUserBets()">查詢</button>-->
+<!--    <div id="user-bets"></div>-->
+<!--</div>-->
 
-<script>
-    function fetchRecent() {
-        fetch("/lotto/recent")
-            .then(res => res.json())
-            .then(data => {
-                const ul = document.getElementById("recent-results");
-                ul.innerHTML = "";
-                data.forEach(draw => {
-                    const li = document.createElement("li");
-                    li.innerHTML = `<span class="result-line">#${draw.issueNumber} ➜ ${draw.numbers.join(', ')} @ ${draw.drawTime}</span>`;
-                    ul.appendChild(li);
-                });
-            });
-    }
+<!--<script>-->
+<!--    function fetchRecent() {-->
+<!--        fetch("/lotto/recent")-->
+<!--            .then(res => res.json())-->
+<!--            .then(data => {-->
+<!--                const ul = document.getElementById("recent-results");-->
+<!--                ul.innerHTML = "";-->
+<!--                data.forEach(draw => {-->
+<!--                    const li = document.createElement("li");-->
+<!--                    li.innerHTML = `<span class="result-line">#${draw.issueNumber} ➜ ${draw.numbers.join(', ')} @ ${draw.drawTime}</span>`;-->
+<!--                    ul.appendChild(li);-->
+<!--                });-->
+<!--            });-->
+<!--    }-->
 
-    function fetchIssue() {
-        const issue = document.getElementById("issue-input").value;
-        if (!issue) return;
+<!--    function fetchIssue() {-->
+<!--        const issue = document.getElementById("issue-input").value;-->
+<!--        if (!issue) return;-->
 
-        fetch(`/lotto/result/${issue}`)
-            .then(res => res.json())
-            .then(draw => {
-                document.getElementById("issue-result").innerHTML =
-                    `第 ${draw.issueNumber} 期開獎：${draw.numbers.join(', ')}（${draw.drawTime}）`;
-            })
-            .catch(() => {
-                document.getElementById("issue-result").innerHTML = "找不到此期數資料。";
-            });
-    }
+<!--        fetch(`/lotto/result/${issue}`)-->
+<!--            .then(res => res.json())-->
+<!--            .then(draw => {-->
+<!--                document.getElementById("issue-result").innerHTML =-->
+<!--                    `第 ${draw.issueNumber} 期開獎：${draw.numbers.join(', ')}（${draw.drawTime}）`;-->
+<!--            })-->
+<!--            .catch(() => {-->
+<!--                document.getElementById("issue-result").innerHTML = "找不到此期數資料。";-->
+<!--            });-->
+<!--    }-->
 
-    function fetchUserBets() {
-        const user = document.getElementById("user-name").value.trim();
-        const issue = document.getElementById("user-issue").value;
-        if (!user || !issue) return;
+<!--    function fetchUserBets() {-->
+<!--        const user = document.getElementById("user-name").value.trim();-->
+<!--        const issue = document.getElementById("user-issue").value;-->
+<!--        if (!user || !issue) return;-->
 
-        fetch(`/lotto/user-bets?user=${encodeURIComponent(user)}&issue=${issue}`)
-            .then(res => res.json())
-            .then(data => {
-                let html = `<h4>${user} 第 ${issue} 期下注記錄：</h4>`;
-                if (data.length === 0) {
-                    html += "<p>沒有紀錄。</p>";
-                } else {
-                    html += "<ul>";
-                    data.forEach(b => {
-                        html += `<li>${b.numbers.join(', ')}</li>`;
-                    });
-                    html += "</ul>";
-                }
-                document.getElementById("user-bets").innerHTML = html;
-            })
-            .catch(() => {
-                document.getElementById("user-bets").innerHTML = "查詢失敗。";
-            });
-    }
-</script>
+<!--        fetch(`/lotto/user-bets?user=${encodeURIComponent(user)}&issue=${issue}`)-->
+<!--            .then(res => res.json())-->
+<!--            .then(data => {-->
+<!--                let html = `<h4>${user} 第 ${issue} 期下注記錄：</h4>`;-->
+<!--                if (data.length === 0) {-->
+<!--                    html += "<p>沒有紀錄。</p>";-->
+<!--                } else {-->
+<!--                    html += "<ul>";-->
+<!--                    data.forEach(b => {-->
+<!--                        html += `<li>${b.numbers.join(', ')}</li>`;-->
+<!--                    });-->
+<!--                    html += "</ul>";-->
+<!--                }-->
+<!--                document.getElementById("user-bets").innerHTML = html;-->
+<!--            })-->
+<!--            .catch(() => {-->
+<!--                document.getElementById("user-bets").innerHTML = "查詢失敗。";-->
+<!--            });-->
+<!--    }-->
+<!--</script>-->
 
-</body>
-</html>
+<!--</body>-->
+<!--</html>-->

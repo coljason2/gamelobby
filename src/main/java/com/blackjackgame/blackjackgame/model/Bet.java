@@ -11,5 +11,5 @@ import java.util.Set;
 public class Bet implements Serializable {
     private String user;
     private List<Set<Integer>> bets; // 每人最多下注3組，每組3個號碼
-    private LocalDateTime time;
+    private LocalDateTime time = LocalDateTime.now();
 }

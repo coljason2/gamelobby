@@ -1,149 +1,149 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <title>樂透開獎查詢</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #f1f3f5;
-            padding: 30px;
-            text-align: center;
-        }
+<!--<!DOCTYPE html>-->
+<!--<html lang="zh-TW">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>樂透開獎查詢</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: sans-serif;-->
+<!--            background: #f1f3f5;-->
+<!--            padding: 30px;-->
+<!--            text-align: center;-->
+<!--        }-->
 
-        h1 {
-            color: #333;
-        }
+<!--        h1 {-->
+<!--            color: #333;-->
+<!--        }-->
 
-        .section {
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
+<!--        .section {-->
+<!--            margin: 30px auto;-->
+<!--            background: white;-->
+<!--            padding: 20px;-->
+<!--            max-width: 600px;-->
+<!--            border-radius: 10px;-->
+<!--            box-shadow: 0 2px 6px rgba(0,0,0,0.1);-->
+<!--        }-->
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--            margin-top: 15px;-->
+<!--        }-->
 
-        th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
-        }
+<!--        th, td {-->
+<!--            padding: 8px;-->
+<!--            border: 1px solid #ddd;-->
+<!--        }-->
 
-        th {
-            background: #007bff;
-            color: white;
-        }
+<!--        th {-->
+<!--            background: #007bff;-->
+<!--            color: white;-->
+<!--        }-->
 
-        tr:hover {
-            background: #f1f8ff;
-        }
+<!--        tr:hover {-->
+<!--            background: #f1f8ff;-->
+<!--        }-->
 
-        input[type="number"] {
-            width: 100px;
-            padding: 5px;
-            margin-right: 10px;
-        }
+<!--        input[type="number"] {-->
+<!--            width: 100px;-->
+<!--            padding: 5px;-->
+<!--            margin-right: 10px;-->
+<!--        }-->
 
-        button {
-            padding: 6px 12px;
-            cursor: pointer;
-        }
+<!--        button {-->
+<!--            padding: 6px 12px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
 
-        #issue-result p {
-            margin: 5px 0;
-        }
+<!--        #issue-result p {-->
+<!--            margin: 5px 0;-->
+<!--        }-->
 
-        #issue-result {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
+<!--        #issue-result {-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
 
-<h1>📊 樂透開獎查詢</h1>
+<!--<h1>📊 樂透開獎查詢</h1>-->
 
-<div class="section">
-    <h2>查詢最近開獎結果</h2>
-    <table id="recent-table" style="display:none;">
-        <thead>
-        <tr>
-            <th>期數</th>
-            <th>開獎時間</th>
-            <th>號碼</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
+<!--<div class="section">-->
+<!--    <h2>查詢最近開獎結果</h2>-->
+<!--    <table id="recent-table" style="display:none;">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>期數</th>-->
+<!--            <th>開獎時間</th>-->
+<!--            <th>號碼</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody></tbody>-->
+<!--    </table>-->
+<!--</div>-->
 
-<div class="section">
-    <h2>查詢指定期數</h2>
-    <input type="number" id="issue-input" placeholder="輸入期數">
-    <button onclick="loadIssue()">查詢</button>
-    <div id="issue-result"></div>
-</div>
+<!--<div class="section">-->
+<!--    <h2>查詢指定期數</h2>-->
+<!--    <input type="number" id="issue-input" placeholder="輸入期數">-->
+<!--    <button onclick="loadIssue()">查詢</button>-->
+<!--    <div id="issue-result"></div>-->
+<!--</div>-->
 
-<script>
-    // 自動載入最近結果
-    document.addEventListener("DOMContentLoaded", loadRecent);
+<!--<script>-->
+<!--    // 自動載入最近結果-->
+<!--    document.addEventListener("DOMContentLoaded", loadRecent);-->
 
-    function loadRecent() {
-        fetch("/lotto/recent?count=10")
-            .then(res => res.json())
-            .then(data => {
-                const table = document.getElementById("recent-table");
-                const tbody = table.querySelector("tbody");
-                tbody.innerHTML = "";
-                data.forEach(draw => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${draw.issueNumber}</td>
-                        <td>${draw.drawTime.replace("T", " ")}</td>
-                        <td>${draw.numbers.join(', ')}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-                table.style.display = "table";
-            })
-            .catch(err => {
-                alert("載入最近開獎資料失敗：" + err.message);
-            });
-    }
+<!--    function loadRecent() {-->
+<!--        fetch("/lotto/recent?count=10")-->
+<!--            .then(res => res.json())-->
+<!--            .then(data => {-->
+<!--                const table = document.getElementById("recent-table");-->
+<!--                const tbody = table.querySelector("tbody");-->
+<!--                tbody.innerHTML = "";-->
+<!--                data.forEach(draw => {-->
+<!--                    const row = document.createElement("tr");-->
+<!--                    row.innerHTML = `-->
+<!--                        <td>${draw.issueNumber}</td>-->
+<!--                        <td>${draw.drawTime.replace("T", " ")}</td>-->
+<!--                        <td>${draw.numbers.join(', ')}</td>-->
+<!--                    `;-->
+<!--                    tbody.appendChild(row);-->
+<!--                });-->
+<!--                table.style.display = "table";-->
+<!--            })-->
+<!--            .catch(err => {-->
+<!--                alert("載入最近開獎資料失敗：" + err.message);-->
+<!--            });-->
+<!--    }-->
 
-    function loadIssue() {
-        const issue = document.getElementById("issue-input").value;
-        if (!issue) {
-            alert("請輸入期數");
-            return;
-        }
+<!--    function loadIssue() {-->
+<!--        const issue = document.getElementById("issue-input").value;-->
+<!--        if (!issue) {-->
+<!--            alert("請輸入期數");-->
+<!--            return;-->
+<!--        }-->
 
-        fetch(`/lotto/result/${issue}`)
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("找不到該期資料");
-                }
-                return res.json();
-            })
-            .then(data => {
-                const resultDiv = document.getElementById("issue-result");
-                resultDiv.innerHTML = `
-                    <p>期數：${data.issueNumber}</p>
-                    <p>開獎時間：${data.drawTime.replace("T", " ")}</p>
-                    <p>號碼：${data.numbers.join(', ')}</p>
-                `;
-            })
-            .catch(err => {
-                document.getElementById("issue-result").innerHTML =
-                    `<p style="color:red;">${err.message}</p>`;
-            });
-    }
-</script>
+<!--        fetch(`/lotto/result/${issue}`)-->
+<!--            .then(res => {-->
+<!--                if (!res.ok) {-->
+<!--                    throw new Error("找不到該期資料");-->
+<!--                }-->
+<!--                return res.json();-->
+<!--            })-->
+<!--            .then(data => {-->
+<!--                const resultDiv = document.getElementById("issue-result");-->
+<!--                resultDiv.innerHTML = `-->
+<!--                    <p>期數：${data.issueNumber}</p>-->
+<!--                    <p>開獎時間：${data.drawTime.replace("T", " ")}</p>-->
+<!--                    <p>號碼：${data.numbers.join(', ')}</p>-->
+<!--                `;-->
+<!--            })-->
+<!--            .catch(err => {-->
+<!--                document.getElementById("issue-result").innerHTML =-->
+<!--                    `<p style="color:red;">${err.message}</p>`;-->
+<!--            });-->
+<!--    }-->
+<!--</script>-->
 
-</body>
-</html>
+<!--</body>-->
+<!--</html>-->

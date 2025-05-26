@@ -11,11 +11,6 @@
 {"issueNumber":11,"winningNumbers":null,"drawTime":"2025-05-26T12:27:45.715","winners":null,"numbers":[8,13,40]}
 {"issueNumber":12,"winningNumbers":null,"drawTime":"2025-05-26T12:28:15.72","winners":null,"numbers":[2,13,20]}
 {"issueNumber":13,"winningNumbers":null,"drawTime":"2025-05-26T12:28:45.73","winners":null,"numbers":[12,21,24]}
-{"issueNumber":1,"winningNumbers":null,"drawTime":"2025-05-26T12:29:20.034","winners":null,"numbers":[5,20,21]}
-{"issueNumber":1,"winningNumbers":null,"drawTime":"2025-05-26T12:30:39.203","winners":null,"numbers":[13,27,28]}
-{"issueNumber":2,"winningNumbers":null,"drawTime":"2025-05-26T12:31:09.215","winners":null,"numbers":[10,15,38]}
-{"issueNumber":3,"winningNumbers":null,"drawTime":"2025-05-26T12:31:39.23","winners":null,"numbers":[4,12,40]}
-{"issueNumber":4,"winningNumbers":null,"drawTime":"2025-05-26T12:32:09.244","winners":null,"numbers":[17,39,42]}
-{"issueNumber":5,"winningNumbers":null,"drawTime":"2025-05-26T12:32:39.251","winners":null,"numbers":[2,3,10]}
-{"issueNumber":1,"winningNumbers":null,"drawTime":"2025-05-26T12:34:15.84","winners":null,"numbers":[1,9,31]}
-{"issueNumber":2,"winningNumbers":null,"drawTime":"2025-05-26T12:34:45.856","winners":null,"numbers":[1,7,16]}
+{"issueNumber":14,"winningNumbers":null,"drawTime":"2025-05-26T12:45:01.471","winners":null,"numbers":[26,27,41]}
+{"issueNumber":15,"winningNumbers":null,"drawTime":"2025-05-26T12:45:31.491","winners":null,"numbers":[7,13,15]}
+{"issueNumber":16,"winningNumbers":null,"drawTime":"2025-05-26T12:46:10.968","winners":null,"numbers":[2,24,35]}
