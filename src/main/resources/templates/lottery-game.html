@@ -37,7 +37,7 @@
             max-width: 600px;
             margin: 0 auto;
             border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         .number-group {
@@ -85,7 +85,7 @@
             max-width: 700px;
             margin: 20px auto;
             border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -101,6 +101,10 @@
 <!-- 下注畫面 -->
 <div id="bet" class="view active">
     <div class="timer">距離下次開獎：<span id="countdown">--</span> 秒</div>
+    <div>
+        <h3>本次開獎號碼： <span id="last-draw-numbers">尚無資料</span></h3>
+    </div>
+
     <div class="bet-form">
         <label>
             暱稱：<br>
@@ -140,7 +144,11 @@
         <button onclick="loadRecent()">查詢</button>
         <table id="recent-table" style="display:none;">
             <thead>
-            <tr><th>期數</th><th>開獎時間</th><th>號碼</th></tr>
+            <tr>
+                <th>期數</th>
+                <th>開獎時間</th>
+                <th>號碼</th>
+            </tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -166,9 +174,11 @@
             .then(res => res.json())
             .then(data => {
                 document.getElementById('countdown').textContent = data.countdown;
+                document.getElementById('last-draw-numbers').textContent = data.lastDrawNumbers.join(', ');
                 setTimeout(fetchCountdown, 1000);
             });
     }
+
     fetchCountdown();
 
     function submitBet() {
@@ -201,10 +211,11 @@
         fetch('/lotto/bet', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ user: username, bets })
+            body: JSON.stringify({user: username, bets})
         }).then(res => {
             if (res.ok) {
                 document.getElementById('success-msg').textContent = "✅ 下注成功！";
+                document.querySelectorAll(".number-group input").forEach(input => input.value = "");
             } else {
                 alert("送出失敗");
             }

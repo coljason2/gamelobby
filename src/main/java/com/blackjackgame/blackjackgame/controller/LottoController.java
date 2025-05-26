@@ -38,6 +38,7 @@ public class LottoController {
         Map<String, Object> map = new HashMap<>();
         map.put("issue", issue);
         map.put("countdown", countdown);
+        map.put("lastDrawNumbers", getRecentResults(1).get(0).getNumbers());
         return map;
     }
 
