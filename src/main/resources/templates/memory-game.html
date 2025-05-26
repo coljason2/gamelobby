@@ -167,7 +167,7 @@
 
         // 倒數提示
         let count = 5;
-        document.getElementById("countdown").innerText = `記住卡片中… ${count}`;
+        document.getElementById("countdown").innerText = `請記住卡片… ${count}`;
         const timer = setInterval(() => {
             count--;
             if (count === 0) {
@@ -175,7 +175,7 @@
                 document.getElementById("countdown").innerText = "開始！";
                 hideCards();
             } else {
-                document.getElementById("countdown").innerText = `記住卡片中… ${count}`;
+                document.getElementById("countdown").innerText = `請記住卡片… ${count}`;
             }
         }, 1000);
 
