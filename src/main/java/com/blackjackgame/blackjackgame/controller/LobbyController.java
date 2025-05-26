@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Controller
 class LobbyController {
 
-    private final List<String> games = Arrays.asList("猜數字遊戲", "21點", "大老二", "剪刀石頭布", "擲骰子比大小", "記憶配對", "猜地雷", "圈圈叉叉", "擲骰競賽","長短比較遊戲","數數看");
+    private final List<String> games = Arrays.asList("猜數字遊戲", "21點", "大老二", "剪刀石頭布", "擲骰子比大小", "記憶配對", "猜地雷", "圈圈叉叉", "擲骰競賽","長短比較遊戲","數數看","簡單樂透");
     private final Random random = new Random();
 
     @GetMapping({"/lobby", "/"})
@@ -60,6 +60,10 @@ class LobbyController {
 
         if ("記憶配對".equals(name)) {
             return "memory-game";
+        }
+
+        if("簡單樂透".equals(name)){
+            return "lottery-game";
         }
 
         if ("猜地雷".equals(name)) {

@@ -1,4 +1,4 @@
-package com.blackjackgame.blackjackgame.data;
+package com.blackjackgame.blackjackgame.model;
 
 
 import lombok.Data;

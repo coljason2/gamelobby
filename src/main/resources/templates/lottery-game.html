@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🎰 樂透遊戲大廳</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f1f3f5;
+            padding: 30px;
+            text-align: center;
+        }
+
+        nav {
+            margin-bottom: 20px;
+        }
+
+        nav button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* 下注區樣式 */
+        .bet-form {
+            background: white;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .number-group {
+            margin-bottom: 10px;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 50px;
+            padding: 5px;
+            margin: 0 3px;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 1.2em;
+            color: #007bff;
+            margin: 20px 0;
+        }
+
+        .success {
+            color: green;
+            margin-top: 10px;
+        }
+
+        /* 查詢區樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            max-width: 700px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎰 樂透遊戲大廳</h1>
+
+<nav>
+    <button onclick="showView('bet')">下注</button>
+    <button onclick="showView('query')">查詢開獎</button>
+</nav>
+
+<!-- 下注畫面 -->
+<div id="bet" class="view active">
+    <div class="timer">距離下次開獎：<span id="countdown">--</span> 秒</div>
+    <div class="bet-form">
+        <label>
+            暱稱：<br>
+            <input type="text" id="username" required>
+        </label>
+
+        <p>請輸入三組號碼（每組 3 個 1~42 的數字）</p>
+
+        <div class="number-group">組1：
+            <input type="number" min="1" max="42">
+            <input type="number" min="1" max="42">
+            <input type="number" min="1" max="42">
+        </div>
+
+        <div class="number-group">組2：
+            <input type="number" min="1" max="42">
+            <input type="number" min="1" max="42">
+            <input type="number" min="1" max="42">
+        </div>
+
+        <div class="number-group">組3：
+            <input type="number" min="1" max="42">
+            <input type="number" min="1" max="42">
+            <input type="number" min="1" max="42">
+        </div>
+
+        <button onclick="submitBet()">送出下注</button>
+        <div class="success" id="success-msg"></div>
+    </div>
+</div>
+
+<!-- 查詢畫面 -->
+<div id="query" class="view">
+    <div class="section">
+        <h2>查詢最近 10 期開獎結果</h2>
+        <button onclick="loadRecent()">查詢</button>
+        <table id="recent-table" style="display:none;">
+            <thead>
+            <tr><th>期數</th><th>開獎時間</th><th>號碼</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>查詢指定期數</h2>
+        <input type="number" id="issue-input" placeholder="輸入期數">
+        <button onclick="loadIssue()">查詢</button>
+        <div id="issue-result"></div>
+    </div>
+</div>
+
+<script>
+    function showView(viewId) {
+        document.querySelectorAll('.view').forEach(div => div.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+    }
+
+    // 倒數計時
+    function fetchCountdown() {
+        fetch('/lotto/current-time')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('countdown').textContent = data.countdown;
+                setTimeout(fetchCountdown, 1000);
+            });
+    }
+    fetchCountdown();
+
+    function submitBet() {
+        const username = document.getElementById('username').value.trim();
+        const allInputs = document.querySelectorAll('#bet input[type="number"]');
+        const bets = [];
+
+        for (let i = 0; i < 3; i++) {
+            const group = [
+                parseInt(allInputs[i * 3].value),
+                parseInt(allInputs[i * 3 + 1].value),
+                parseInt(allInputs[i * 3 + 2].value)
+            ];
+            if (group.some(n => isNaN(n) || n < 1 || n > 42)) {
+                alert(`組${i + 1} 請輸入 1~42 的有效數字`);
+                return;
+            }
+            if (new Set(group).size !== 3) {
+                alert(`組${i + 1} 的數字不可重複`);
+                return;
+            }
+            bets.push(group);
+        }
+
+        if (!username) {
+            alert("請輸入暱稱");
+            return;
+        }
+
+        fetch('/lotto/bet', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ user: username, bets })
+        }).then(res => {
+            if (res.ok) {
+                document.getElementById('success-msg').textContent = "✅ 下注成功！";
+            } else {
+                alert("送出失敗");
+            }
+        });
+    }
+
+    function loadRecent() {
+        fetch("/lotto/recent?count=10")
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("recent-table");
+                const tbody = table.querySelector("tbody");
+                tbody.innerHTML = "";
+                data.forEach(draw => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${draw.issue}</td>
+                        <td>${draw.drawTime.replace("T", " ")}</td>
+                        <td>${draw.numbers.join(', ')}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                table.style.display = "table";
+            });
+    }
+
+    function loadIssue() {
+        const issue = document.getElementById("issue-input").value;
+        if (!issue) {
+            alert("請輸入期數");
+            return;
+        }
+
+        fetch(`/lotto/result/${issue}`)
+            .then(res => {
+                if (!res.ok) throw new Error("找不到該期資料");
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById("issue-result").innerHTML = `
+                    <p>期數：${data.issue}</p>
+                    <p>開獎時間：${data.drawTime.replace("T", " ")}</p>
+                    <p>號碼：${data.numbers.join(', ')}</p>
+                `;
+            })
+            .catch(err => {
+                document.getElementById("issue-result").innerHTML = `<p style="color:red;">${err.message}</p>`;
+            });
+    }
+</script>
+</body>
+</html>
