@@ -37,8 +37,5 @@ public class DrawScheduler {
                 log.info("🎉 {} 中 {} 個號碼：{}", winner.getUser(), winner.getMatchCount(), winner.getNumbers());
             }
         }
-
-        // 清理該期下注
-        betService.clearBetsForIssue(draw.getIssueNumber());
     }
 }

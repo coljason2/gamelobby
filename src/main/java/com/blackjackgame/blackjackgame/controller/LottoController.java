@@ -4,14 +4,18 @@ import com.blackjackgame.blackjackgame.model.Bet;
 import com.blackjackgame.blackjackgame.model.DrawResult;
 import com.blackjackgame.blackjackgame.service.BetService;
 import com.blackjackgame.blackjackgame.service.DrawService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/lotto")
 public class LottoController {
@@ -59,5 +63,24 @@ public class LottoController {
         return betService.getBetsForIssue(issue).stream()
                 .filter(b -> user.equals(b.getUser()))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/check-win")
+    public boolean checkIfUserWon(@RequestParam String user, @RequestParam int issue) {
+        DrawResult result = drawService.getDrawResult(issue);
+        if (result == null) return false;
+
+        List<Integer> winning = result.getNumbers();
+        return betService.getBetsForIssue(issue).stream()
+                .filter(b -> user.equals(b.getUser()))
+                .anyMatch(b -> winning.containsAll(b.getBets()));
+    }
+
+    @GetMapping("/my-bets")
+    public ResponseEntity<List<Bet>> getMyBets(@RequestParam String user) {
+        log.info("[my-bets] user :{}", user);
+        List<Bet> list = betService.getBetsFromUser(user);
+        log.info("[my-bets] list :{}", list);
+        return ResponseEntity.ok(list);
     }
 }
