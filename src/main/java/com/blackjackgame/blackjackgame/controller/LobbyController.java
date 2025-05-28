@@ -14,12 +14,32 @@ import java.util.stream.Collectors;
 @Controller
 class LobbyController {
 
-    private final List<String> games = Arrays.asList("猜數字遊戲", "21點", "大老二", "剪刀石頭布", "擲骰子比大小", "記憶配對", "猜地雷", "圈圈叉叉", "擲骰競賽","長短比較遊戲","數數看","簡單樂透");
+    private static final Map<String, List<String>> GAME_CATEGORIES = new HashMap<>();
+
+    static {
+        GAME_CATEGORIES.put("兒童遊戲", Arrays.asList(
+                "圈圈叉叉",
+                "剪刀石頭布",
+                "記憶配對",
+                "猜地雷",
+                "長短比較遊戲",
+                "數數看"
+        ));
+
+        GAME_CATEGORIES.put("博弈益智", Arrays.asList(
+                "猜數字遊戲",
+                "21點",
+                "大老二",
+                "擲骰子比大小",
+                "擲骰競賽",
+                "簡單樂透"
+        ));
+    }
     private final Random random = new Random();
 
     @GetMapping({"/lobby", "/"})
     public String lobby(Model model) {
-        model.addAttribute("games", games);
+        model.addAttribute("gameCategories", GAME_CATEGORIES);
         return "lobby";
     }
 

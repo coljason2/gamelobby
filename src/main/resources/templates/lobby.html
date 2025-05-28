@@ -85,12 +85,13 @@
 </head>
 <body>
 <h1>🎮 遊戲大廳</h1>
-<ul>
-    <th:block th:each="game : ${games}">
-        <li>
+<div th:each="entry : ${gameCategories}" class="w-100" style="max-width: 900px; margin-bottom: 3rem;">
+    <h2 th:text="${entry.key}" style="text-align:center; margin-bottom: 1.5rem; font-size: 1.75rem;"></h2>
+    <ul>
+        <li th:each="game : ${entry.value}">
             <a th:href="@{'/lobby/game/' + ${game}}" th:text="${game}"></a>
         </li>
-    </th:block>
-</ul>
+    </ul>
+</div>
 </body>
 </html>
